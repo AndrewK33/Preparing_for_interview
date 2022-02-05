@@ -19,6 +19,9 @@ public class ThreadSafeCounter {
         int x=0;
     }
 
+
+
+
     static class CountThread implements Runnable{
         CommonResource res;
         ReentrantLock locker;
@@ -26,23 +29,24 @@ public class ThreadSafeCounter {
             this.res=res;
             locker = lock;
         }
-        public void run(){
 
-            locker.lock();
+
+        public void run(){
             try{
                 res.x=1;
                 for (int i = 1; i < 5; i++){
+                    locker.lock();
                     System.out.printf("%s %d \n", Thread.currentThread().getName(), res.x);
                     res.x++;
-                    Thread.sleep(100);
+                    Thread.sleep(1000);
+                    locker.unlock();
                 }
             }
             catch(InterruptedException e){
                 System.out.println(e.getMessage());
             }
-            finally{
-                locker.unlock();
-            }
+
+
         }
     }
 
