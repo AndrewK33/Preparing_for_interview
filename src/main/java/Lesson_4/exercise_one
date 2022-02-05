@@ -1,0 +1,176 @@
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+
+DROP SCHEMA IF EXISTS `Cinema_db` ;
+
+
+CREATE SCHEMA IF NOT EXISTS `Cinema_db` DEFAULT CHARACTER SET utf8 ;
+USE `Cinema_db` ;
+
+
+DROP TABLE IF EXISTS `Cinema_db`.`cinema` ;
+
+CREATE TABLE IF NOT EXISTS `Cinema_db`.`cinema` (
+  `Cinema_id` VARCHAR(16) NOT NULL,
+  `Cinema_name` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`Cinema_id`),
+  UNIQUE INDEX `Cinema_id_UNIQUE` (`Cinema_id` ASC) VISIBLE);
+
+
+
+DROP TABLE IF EXISTS `Cinema_db`.`hall` ;
+
+CREATE TABLE IF NOT EXISTS `Cinema_db`.`hall` (
+  `Hall_id` VARCHAR(255) NOT NULL,
+  `Hall_name` VARCHAR(255) NOT NULL,
+  `Cinema_id` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Hall_id`),
+  UNIQUE INDEX `Hall_id_UNIQUE` (`Hall_id` ASC) VISIBLE,
+  INDEX `Cinema_id_idx` (`Cinema_id` ASC) VISIBLE,
+  CONSTRAINT `Cinema_id`
+    FOREIGN KEY (`Cinema_id`)
+    REFERENCES `Cinema_db`.`cinema` (`Cinema_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+
+DROP TABLE IF EXISTS `Cinema_db`.`film` ;
+
+CREATE TABLE IF NOT EXISTS `Cinema_db`.`film` (
+  `Film_id` VARCHAR(255) NOT NULL,
+  `Film_name` VARCHAR(255) NOT NULL,
+  `Film_duration` INT NULL,
+  PRIMARY KEY (`Film_id`),
+  UNIQUE INDEX `Film_id_UNIQUE` (`Film_id` ASC) VISIBLE);
+
+
+
+DROP TABLE IF EXISTS `Cinema_db`.`rental_list` ;
+
+CREATE TABLE IF NOT EXISTS `Cinema_db`.`rental_list` (
+  `Date` DATE NOT NULL,
+  `Hall_id` VARCHAR(255) NOT NULL,
+  `Film_id` VARCHAR(32) NOT NULL,
+  `Start_time` TIME NULL,
+  `Rental_id` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Rental_id`),
+  INDEX `Hall_id_idx` (`Hall_id` ASC) VISIBLE,
+  INDEX `Film_id_idx` (`Film_id` ASC) VISIBLE,
+  UNIQUE INDEX `Rental_id_UNIQUE` (`Rental_id` ASC) VISIBLE,
+  CONSTRAINT `Hall_id`
+    FOREIGN KEY (`Hall_id`)
+    REFERENCES `Cinema_db`.`hall` (`Hall_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `Film_id`
+    FOREIGN KEY (`Film_id`)
+    REFERENCES `Cinema_db`.`film` (`Film_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+
+DROP TABLE IF EXISTS `Cinema_db`.`place_and_row` ;
+
+CREATE TABLE IF NOT EXISTS `Cinema_db`.`place_and_row` (
+  `Hall_id` VARCHAR(255) NOT NULL,
+  `Row` VARCHAR(45) NOT NULL,
+  `Place` VARCHAR(45) NOT NULL,
+  `Place_and_row_id` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`Place_and_row_id`),
+  INDEX `Hall_id_idxd` (`Hall_id` ASC) VISIBLE,
+  CONSTRAINT `Hall_id_one`
+    FOREIGN KEY (`Hall_id`)
+    REFERENCES `Cinema_db`.`hall` (`Hall_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+
+DROP TABLE IF EXISTS `Cinema_db`.`ticket` ;
+
+CREATE TABLE IF NOT EXISTS `Cinema_db`.`ticket` (
+  `Ticket_number` VARCHAR(255) NOT NULL,
+  `Date` DATE NOT NULL,
+  `Status` VARCHAR(10) NOT NULL,
+  `Place_and_row_id` VARCHAR(255) NOT NULL,
+  `Price` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`Ticket_number`),
+  UNIQUE INDEX `ticket_number_UNIQUE` (`Ticket_number` ASC) VISIBLE,
+  INDEX `Place_and_row_id_idx` (`Place_and_row_id` ASC) VISIBLE,
+  CONSTRAINT `Place_and_row_id`
+    FOREIGN KEY (`Place_and_row_id`)
+    REFERENCES `Cinema_db`.`place_and_row` (`Place_and_row_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
+START TRANSACTION;
+USE `Cinema_db`;
+INSERT INTO `Cinema_db`.`cinema` (`Cinema_id`, `Cinema_name`) VALUES ('1', 'Karo');
+
+COMMIT;
+
+
+
+START TRANSACTION;
+USE `Cinema_db`;
+INSERT INTO `Cinema_db`.`hall` (`Hall_id`, `Hall_name`, `Cinema_id`) VALUES ('1', 'Prusco', '1');
+INSERT INTO `Cinema_db`.`hall` (`Hall_id`, `Hall_name`, `Cinema_id`) VALUES ('2', 'Calibri', '1');
+
+COMMIT;
+
+
+
+START TRANSACTION;
+USE `Cinema_db`;
+INSERT INTO `Cinema_db`.`film` (`Film_id`, `Film_name`, `Film_duration`) VALUES ('1', 'Rembo', 60);
+INSERT INTO `Cinema_db`.`film` (`Film_id`, `Film_name`, `Film_duration`) VALUES ('2', 'Grand_Torino', 90);
+
+COMMIT;
+
+
+
+START TRANSACTION;
+USE `Cinema_db`;
+INSERT INTO `Cinema_db`.`rental_list` (`Date`, `Hall_id`, `Film_id`, `Start_time`, `Rental_id`) VALUES ('2022.01.01', '1', '1', '11:00', '1');
+INSERT INTO `Cinema_db`.`rental_list` (`Date`, `Hall_id`, `Film_id`, `Start_time`, `Rental_id`) VALUES ('2022.01.03', '2', '2', '11:30', '2');
+INSERT INTO `Cinema_db`.`rental_list` (`Date`, `Hall_id`, `Film_id`, `Start_time`, `Rental_id`) VALUES ('2022.01.01', '2', '2', '11:00', '3');
+INSERT INTO `Cinema_db`.`rental_list` (`Date`, `Hall_id`, `Film_id`, `Start_time`, `Rental_id`) VALUES ('2022.01.01', '1', '2', '15:00', '4');
+
+COMMIT;
+
+
+
+
+START TRANSACTION;
+USE `Cinema_db`;
+INSERT INTO `Cinema_db`.`place_and_row` (`Hall_id`, `Row`, `Place`, `Place_and_row_id`) VALUES ('1', '1', '1', '1');
+INSERT INTO `Cinema_db`.`place_and_row` (`Hall_id`, `Row`, `Place`, `Place_and_row_id`) VALUES ('1', '1', '2', '2');
+INSERT INTO `Cinema_db`.`place_and_row` (`Hall_id`, `Row`, `Place`, `Place_and_row_id`) VALUES ('1', '1', '3', '3');
+INSERT INTO `Cinema_db`.`place_and_row` (`Hall_id`, `Row`, `Place`, `Place_and_row_id`) VALUES ('1', '1', '1', '4');
+INSERT INTO `Cinema_db`.`place_and_row` (`Hall_id`, `Row`, `Place`, `Place_and_row_id`) VALUES ('2', '1', '1', '5');
+INSERT INTO `Cinema_db`.`place_and_row` (`Hall_id`, `Row`, `Place`, `Place_and_row_id`) VALUES ('2', '1', '2', '6');
+
+COMMIT;
+
+
+
+START TRANSACTION;
+USE `Cinema_db`;
+INSERT INTO `Cinema_db`.`ticket` (`Ticket_number`, `Date`, `Status`, `Place_and_row_id`, `Price`) VALUES ('1234', '2022.01.01', '1', '1', '100');
+INSERT INTO `Cinema_db`.`ticket` (`Ticket_number`, `Date`, `Status`, `Place_and_row_id`, `Price`) VALUES ('4321', '2022.01.03', '0', '2', '200');
+INSERT INTO `Cinema_db`.`ticket` (`Ticket_number`, `Date`, `Status`, `Place_and_row_id`, `Price`) VALUES ('3421', '2022.01.01', '1', '3', '200');
+INSERT INTO `Cinema_db`.`ticket` (`Ticket_number`, `Date`, `Status`, `Place_and_row_id`, `Price`) VALUES ('3241', '2022.01.01', '1', '4', '100');
+INSERT INTO `Cinema_db`.`ticket` (`Ticket_number`, `Date`, `Status`, `Place_and_row_id`, `Price`) VALUES ('3214', '2022.01.01', '1', '5', '200');
+
+COMMIT;
+
