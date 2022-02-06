@@ -14,7 +14,17 @@
         <hibernate-version>5.0.1.Final</hibernate-version>
     </properties>
 
+    <packaging>war</packaging>
+
     <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+
         <!--driver for connection to MYSql database -->
         <dependency>
             <groupId>mysql</groupId>
@@ -70,5 +80,32 @@
         </dependency>
         <!--END Hibernate -->
     </dependencies>
+
+    <build>
+        <finalName>servlet-app</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.2.2</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <url>http://localhost:8080/manager/text</url>
+                    <username>admin</username>
+                    <password>admin</password>
+                    <path>/servlet-app</path>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
 
 </project>
