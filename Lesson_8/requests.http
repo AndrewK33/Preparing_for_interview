@@ -1,0 +1,22 @@
+GET http://localhost:8080/api/v1/user/all
+
+###
+
+GET http://localhost:8080/api/v1/user/1/id
+
+###
+
+POST http://localhost:8080/api/v1/user
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Ivanov",
+  "login": "123",
+  "password": "123"
+}
+
+
+###
+
+DELETE http://localhost:8080/api/v1/user/4/id
